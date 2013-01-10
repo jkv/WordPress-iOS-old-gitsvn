@@ -158,7 +158,9 @@ typedef NS_ENUM(NSInteger, EditPostViewControllerAlertTag) {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCategoryCreatedNotificationReceived:) name:WPNewCategoryCreatedAndUpdatedInBlogNotificationName object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(insertMediaAbove:) name:@"ShouldInsertMediaAbove" object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(insertMediaBelow:) name:@"ShouldInsertMediaBelow" object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeMedia:) name:@"ShouldRemoveMedia" object:nil];	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeMedia:) name:@"ShouldRemoveMedia" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateMedia:) name:@"UpdateMedia" object:nil];
+    
 	
     isTextViewEditing = NO;
     spinner = [[WPProgressHUD alloc] initWithLabel:NSLocalizedString(@"Saving...", @"Status message to indicate that content is saving (use an ellipsis (...) towards the end)")];
@@ -1288,6 +1290,24 @@ typedef NS_ENUM(NSInteger, EditPostViewControllerAlertTag) {
 		[content appendString:[NSString stringWithFormat:@"<br /><br />%@", processedText]]; 
 		self.apost.content = content;
 	}
+    [self refreshUIForCurrentPost];
+}
+
+- (void)updateMedia:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+	Media *media = (Media *)[userInfo objectForKey:@"media"];
+    NSString *previousHtml = (NSString *)[userInfo objectForKey:@"previousHtml"];
+	
+	NSMutableString *content = [[NSMutableString alloc] initWithString:self.apost.content];
+    NSRange imgHTML = [textView.text rangeOfString: previousHtml];
+    
+    if (imgHTML.location == NSNotFound) {
+		[content appendString:[NSString stringWithFormat:@"<br /><br />%@", media.html]];
+	}
+	else {
+		[content replaceCharactersInRange:imgHTML withString:media.html];
+	}
+    self.apost.content = content;
     [self refreshUIForCurrentPost];
 }
 

@@ -36,6 +36,11 @@
 @dynamic blog;
 @dynamic posts;
 @dynamic remoteStatusNumber;
+@synthesize caption;
+@synthesize alignment;
+@synthesize linkType;
+@synthesize customWidth;
+@synthesize customHeight;
 
 + (Media *)newMediaForPost:(AbstractPost *)post {
     Media *media = [[Media alloc] initWithEntity:[NSEntityDescription entityForName:@"Media"
@@ -212,20 +217,46 @@
 			if(self.shortcode != nil)
 				result = self.shortcode;
 			else if(self.remoteURL != nil) {
-                NSString *linkType = nil;
-                if( [[self.blog getOptionValue:@"image_default_link_type"] isKindOfClass:[NSString class]] )
-                    linkType = (NSString *)[self.blog getOptionValue:@"image_default_link_type"];
-                else
-                    linkType = @"";
+                // link type
+                NSString *mediaLinkType = nil;
+                if (self.linkType != nil) {
+                    mediaLinkType = self.linkType;
+                } else {
+                    // check the default link type
+                    if( [[self.blog getOptionValue:@"image_default_link_type"] isKindOfClass:[NSString class]] )
+                        mediaLinkType = (NSString *)[self.blog getOptionValue:@"image_default_link_type"];
+                    else
+                        mediaLinkType = @"";
+                }
+                NSString *linkPrefix = nil;
+                NSString *linkPostfix = nil;
+                if ([mediaLinkType isEqualToString:@"none"]) {
+                    linkPrefix = @"";
+                    linkPostfix = @"";
+                } else {
+                    linkPrefix = [NSString stringWithFormat:
+                                  @"<a href=\"%@\">",
+                                  self.remoteURL];
+                    linkPostfix = @"</a>";
+
+                }
                 
-                if ([linkType isEqualToString:@"none"]) {
+                // setup some defaults if values aren't set yet
+                if (self.alignment == nil) {
+                    self.alignment = @"alignnone";
+                }
+                if (self.customWidth == nil) {
+                    self.customWidth = [NSNumber numberWithInt:[self.width intValue]];
+                }
+                
+                if (self.caption != nil) {
                     result = [NSString stringWithFormat:
-                              @"<img src=\"%@\" alt=\"%@\" class=\"alignnone size-full\" />",
-                              self.remoteURL, self.filename];
+                              @"[caption align=\"%@\" width=\"%d\"]%@<img src=\"%@\" width=\"%d\" />%@%@[/caption]",
+                              self.alignment, [self.customWidth intValue], linkPrefix, self.remoteURL, [self.customWidth intValue], linkPostfix, self.caption];
                 } else {
                     result = [NSString stringWithFormat:
-                              @"<a href=\"%@\"><img src=\"%@\" alt=\"%@\" class=\"alignnone size-full\" /></a>",
-                              self.remoteURL, self.remoteURL, self.filename];
+                              @"%@<img src=\"%@\" width=\"%d\" class=\"%@\"/>%@",
+                              linkPrefix, self.remoteURL, [self.customWidth intValue], self.alignment, linkPostfix];
                 }
             }
 		}

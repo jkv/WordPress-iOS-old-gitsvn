@@ -30,6 +30,11 @@ typedef NS_ENUM(NSUInteger, MediaRemoteStatus) {
 @property (nonatomic, strong) NSString * shortcode;
 @property (nonatomic, strong) NSNumber * length;
 @property (nonatomic, strong) NSString * title;
+@property (nonatomic, strong) NSString * caption;
+@property (nonatomic, strong) NSString * alignment;
+@property (nonatomic, strong) NSString * linkType;
+@property (nonatomic, strong) NSNumber * customWidth;
+@property (nonatomic, strong) NSNumber * customHeight;
 @property (nonatomic, strong) NSData * thumbnail;
 @property (nonatomic, strong) NSString * filename;
 @property (nonatomic, strong) NSNumber * filesize;

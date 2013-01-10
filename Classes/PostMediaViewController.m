@@ -16,6 +16,7 @@
 #define TAG_ACTIONSHEET_PHOTO 1
 #define TAG_ACTIONSHEET_VIDEO 2
 #define NUMBERS	@"0123456789"
+#define DEFAULT_IMAGE_CUSTOM_WIDTH 500
 
 
 @interface PostMediaViewController (Private)
@@ -224,9 +225,18 @@
     } else if (media.remoteStatus == MediaRemoteStatusProcessing) {
         // Do nothing. See trac #1508
     } else {
-        MediaObjectViewController *mediaView = [[MediaObjectViewController alloc] initWithNibName:@"MediaObjectView" bundle:nil];
-        [mediaView setMedia:media];
-
+        // for images use the new media settings view
+        UIViewController *mediaView;
+        if ([media.mediaType isEqualToString:@"image"]) {
+            MediaSettingsViewController *tempMediaView = [[MediaSettingsViewController alloc] initWithNibName:@"MediaSettingsViewController" bundle:nil];
+            [tempMediaView setMedia:media];
+            mediaView = tempMediaView;
+        } else {
+            MediaObjectViewController *tempMediaView = [[MediaObjectViewController alloc] initWithNibName:@"MediaObjectView" bundle:nil];
+            [tempMediaView setMedia:media];
+            mediaView = tempMediaView;
+        }
+        
         if(IS_IPAD == YES) {
 			mediaView.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 			mediaView.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -1316,6 +1326,14 @@
 	imageMedia.filename = filename;
 	imageMedia.localURL = filepath;
 	imageMedia.filesize = [NSNumber numberWithInt:(imageData.length/1024)];
+    
+    // set the link type for the image
+    if( [[self.postDetailViewController.apost.blog getOptionValue:@"image_default_link_type"] isKindOfClass:[NSString class]] ) {
+        imageMedia.linkType = (NSString *)[self.postDetailViewController.apost.blog getOptionValue:@"image_default_link_type"];
+    } else {
+        imageMedia.linkType = @"none";
+    }
+    
     if (isPickingFeaturedImage)
         imageMedia.mediaType = @"featured";
     else
@@ -1323,6 +1341,13 @@
 	imageMedia.thumbnail = UIImageJPEGRepresentation(imageThumbnail, 0.90);
 	imageMedia.width = [NSNumber numberWithInt:theImage.size.width];
 	imageMedia.height = [NSNumber numberWithInt:theImage.size.height];
+    
+    if ([imageMedia.width intValue] > DEFAULT_IMAGE_CUSTOM_WIDTH) {
+        imageMedia.customWidth = [NSNumber numberWithInt:DEFAULT_IMAGE_CUSTOM_WIDTH];
+    } else {
+        imageMedia.customWidth = [NSNumber numberWithInt:[imageMedia.width intValue]];
+    }
+    imageMedia.customHeight = [NSNumber numberWithInt:[imageMedia.customWidth intValue] * [imageMedia.height intValue]/[imageMedia.width intValue]];
     if (isPickingFeaturedImage)
         [[NSNotificationCenter defaultCenter] postNotificationName:@"UploadingFeaturedImage" object:nil];
 

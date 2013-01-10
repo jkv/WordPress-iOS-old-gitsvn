@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0070B80C1698919100C257A9 /* MediaSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0070B80B1698919100C257A9 /* MediaSettingsViewController.xib */; };
+		0070B80F1698921800C257A9 /* MediaSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0070B80E1698921800C257A9 /* MediaSettingsViewController.m */; };
+		00DC57501698C2FF00C27818 /* button_red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00DC574E1698C2FF00C27818 /* button_red@2x.png */; };
+		00DC57511698C2FF00C27818 /* button_red.png in Resources */ = {isa = PBXBuildFile; fileRef = 00DC574F1698C2FF00C27818 /* button_red.png */; };
 		00F2E3F8166EEF9800D0527C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834CE7371256D0F60046A4A3 /* CoreGraphics.framework */; };
 		00F2E3FA166EEFBE00D0527C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E10B3653158F2D4500419A93 /* UIKit.framework */; };
 		00F2E3FB166EEFE100D0527C /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E10B3651158F2D3F00419A93 /* QuartzCore.framework */; };
@@ -595,6 +599,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0070B80B1698919100C257A9 /* MediaSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MediaSettingsViewController.xib; sourceTree = "<group>"; };
+		0070B80D1698921800C257A9 /* MediaSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSettingsViewController.h; sourceTree = "<group>"; };
+		0070B80E1698921800C257A9 /* MediaSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaSettingsViewController.m; sourceTree = "<group>"; };
+		00DC574E1698C2FF00C27818 /* button_red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button_red@2x.png"; sourceTree = "<group>"; };
+		00DC574F1698C2FF00C27818 /* button_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_red.png; sourceTree = "<group>"; };
+		00DC57531699ED6600C27818 /* WordPress 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WordPress 9.xcdatamodel"; sourceTree = "<group>"; };
 		031663050FFB151A0045D052 /* PostTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostTableViewCell.h; sourceTree = "<group>"; };
 		031663060FFB151A0045D052 /* PostTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostTableViewCell.m; sourceTree = "<group>"; };
 		031666AC0FFC3E130045D052 /* CommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentTableViewCell.h; sourceTree = "<group>"; };
@@ -1142,7 +1152,7 @@
 		E10B3663158F3B9500419A93 /* CrashReporter.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = CrashReporter.framework; path = Classes/CrashReporter.framework; sourceTree = "<group>"; };
 		E114D798153D85A800984182 /* WPError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WPError.h; sourceTree = "<group>"; };
 		E114D799153D85A800984182 /* WPError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WPError.m; sourceTree = "<group>"; };
-		E115F2D116776A2900CCF00D /* WordPress 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WordPress 8.xcdatamodel"; sourceTree = "<group>"; };
+		E115F2D116776A2900CCF00D /* WordPress 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "WordPress 8.xcdatamodel"; sourceTree = "<group>"; };
 		E11930C21312F8A800F34124 /* FakeMigration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeMigration.h; sourceTree = "<group>"; };
 		E11930C31312F8A800F34124 /* FakeMigration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeMigration.m; sourceTree = "<group>"; };
 		E11C91CB135771010072A811 /* blockquote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blockquote.png; sourceTree = "<group>"; };
@@ -1903,6 +1913,7 @@
 		83290399120CF517000A965A /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				0070B80B1698919100C257A9 /* MediaSettingsViewController.xib */,
 				83CAD4201235F9F4003DFA20 /* MediaObjectView.xib */,
 				8383178712270E980047B476 /* PostMediaViewController.xib */,
 			);
@@ -1953,6 +1964,8 @@
 				8383178612270E980047B476 /* PostMediaViewController.m */,
 				83CAD41A1235F854003DFA20 /* MediaObjectViewController.h */,
 				83CAD41B1235F854003DFA20 /* MediaObjectViewController.m */,
+				0070B80D1698921800C257A9 /* MediaSettingsViewController.h */,
+				0070B80E1698921800C257A9 /* MediaSettingsViewController.m */,
 			);
 			name = Media;
 			sourceTree = "<group>";
@@ -2054,6 +2067,8 @@
 		AC512F790E20D25E00B7DA32 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				00DC574E1698C2FF00C27818 /* button_red@2x.png */,
+				00DC574F1698C2FF00C27818 /* button_red.png */,
 				5D4DE6EC167165060030518D /* icon_info_message.png */,
 				5D4DE6ED167165060030518D /* icon_info_message@2x.png */,
 				E1EE23E712E628F6000B2BE6 /* attachment.png */,
@@ -3093,6 +3108,9 @@
 				5D4DE6EE167165060030518D /* icon_info_message.png in Resources */,
 				5D4DE6EF167165060030518D /* icon_info_message@2x.png in Resources */,
 				5D4DE6F5167177560030518D /* WPInfoView.xib in Resources */,
+				0070B80C1698919100C257A9 /* MediaSettingsViewController.xib in Resources */,
+				00DC57501698C2FF00C27818 /* button_red@2x.png in Resources */,
+				00DC57511698C2FF00C27818 /* button_red.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3269,6 +3287,7 @@
 				E10466081630961700E8EDDA /* WPRSDParser.m in Sources */,
 				5DD91BC5163983670053E560 /* SoundUtil.m in Sources */,
 				5D4DE6F4167177560030518D /* WPInfoView.m in Sources */,
+				0070B80F1698921800C257A9 /* MediaSettingsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3733,6 +3752,7 @@
 		E125443B12BF5A7200D87A0A /* WordPress.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				00DC57531699ED6600C27818 /* WordPress 9.xcdatamodel */,
 				E1874BFE161C5DBC0058BDC4 /* WordPress 7.xcdatamodel */,
 				E115F2D116776A2900CCF00D /* WordPress 8.xcdatamodel */,
 				FD374343156CF4B800BAB5B5 /* WordPress 6.xcdatamodel */,
@@ -3742,7 +3762,7 @@
 				8350E15911D28B4A00A7B073 /* WordPress.xcdatamodel */,
 				E125443D12BF5A7200D87A0A /* WordPress 2.xcdatamodel */,
 			);
-			currentVersion = E115F2D116776A2900CCF00D /* WordPress 8.xcdatamodel */;
+			currentVersion = 00DC57531699ED6600C27818 /* WordPress 9.xcdatamodel */;
 			name = WordPress.xcdatamodeld;
 			path = Classes/WordPress.xcdatamodeld;
 			sourceTree = "<group>";
