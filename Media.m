@@ -36,11 +36,11 @@
 @dynamic blog;
 @dynamic posts;
 @dynamic remoteStatusNumber;
-@synthesize caption;
-@synthesize alignment;
-@synthesize linkType;
-@synthesize customWidth;
-@synthesize customHeight;
+@dynamic caption;
+@dynamic alignment;
+@dynamic linkType;
+@dynamic customWidth;
+@dynamic customHeight;
 
 + (Media *)newMediaForPost:(AbstractPost *)post {
     Media *media = [[Media alloc] initWithEntity:[NSEntityDescription entityForName:@"Media"

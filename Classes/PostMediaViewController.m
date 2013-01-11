@@ -16,7 +16,6 @@
 #define TAG_ACTIONSHEET_PHOTO 1
 #define TAG_ACTIONSHEET_VIDEO 2
 #define NUMBERS	@"0123456789"
-#define DEFAULT_IMAGE_CUSTOM_WIDTH 500
 
 
 @interface PostMediaViewController (Private)
@@ -1342,11 +1341,7 @@
 	imageMedia.width = [NSNumber numberWithInt:theImage.size.width];
 	imageMedia.height = [NSNumber numberWithInt:theImage.size.height];
     
-    if ([imageMedia.width intValue] > DEFAULT_IMAGE_CUSTOM_WIDTH) {
-        imageMedia.customWidth = [NSNumber numberWithInt:DEFAULT_IMAGE_CUSTOM_WIDTH];
-    } else {
-        imageMedia.customWidth = [NSNumber numberWithInt:[imageMedia.width intValue]];
-    }
+    imageMedia.customWidth = [NSNumber numberWithInt:[imageMedia.width intValue]];
     imageMedia.customHeight = [NSNumber numberWithInt:[imageMedia.customWidth intValue] * [imageMedia.height intValue]/[imageMedia.width intValue]];
     if (isPickingFeaturedImage)
         [[NSNotificationCenter defaultCenter] postNotificationName:@"UploadingFeaturedImage" object:nil];
