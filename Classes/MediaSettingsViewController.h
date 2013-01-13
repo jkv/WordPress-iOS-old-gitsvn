@@ -12,6 +12,7 @@
 #import "Media.h"
 #import "UITableViewActivityCell.h"
 #import "WPPopoverBackgroundView.h"
+#import "MediaSettings.h"
 
 @interface MediaSettingsViewController : UIViewController <UIAlertViewDelegate, UIActionSheetDelegate, UITableViewDataSource, UITableViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate> {
 	Media *media;
@@ -37,5 +38,6 @@
 }
 
 @property (nonatomic, strong) Media *media;
+@property (nonatomic, strong) MediaSettings *mediaSettings;
 
 @end

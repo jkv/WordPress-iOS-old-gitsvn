@@ -216,7 +216,8 @@
                 NSLog(@"Media deleted while uploading (%@)", media);
                 return;
             }
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaBelow" object:media];
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:media, @"media", [[MediaSettings alloc] init], @"mediaSettings", nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaBelow" object:self userInfo:userInfo];
             [media save];
         } failure:nil];
     } else if (media.remoteStatus == MediaRemoteStatusPushing) {
@@ -229,6 +230,8 @@
         if ([media.mediaType isEqualToString:@"image"]) {
             MediaSettingsViewController *tempMediaView = [[MediaSettingsViewController alloc] initWithNibName:@"MediaSettingsViewController" bundle:nil];
             [tempMediaView setMedia:media];
+            MediaSettings *mediaSettings = [MediaSettings createMediaSettingsForUrl:media.remoteURL content:postDetailViewController.apost.content];
+            [tempMediaView setMediaSettings:mediaSettings];
             mediaView = tempMediaView;
         } else {
             MediaObjectViewController *tempMediaView = [[MediaObjectViewController alloc] initWithNibName:@"MediaObjectView" bundle:nil];
@@ -1325,14 +1328,7 @@
 	imageMedia.filename = filename;
 	imageMedia.localURL = filepath;
 	imageMedia.filesize = [NSNumber numberWithInt:(imageData.length/1024)];
-    
-    // set the link type for the image
-    if( [[self.postDetailViewController.apost.blog getOptionValue:@"image_default_link_type"] isKindOfClass:[NSString class]] ) {
-        imageMedia.linkType = (NSString *)[self.postDetailViewController.apost.blog getOptionValue:@"image_default_link_type"];
-    } else {
-        imageMedia.linkType = @"none";
-    }
-    
+        
     if (isPickingFeaturedImage)
         imageMedia.mediaType = @"featured";
     else
@@ -1341,8 +1337,6 @@
 	imageMedia.width = [NSNumber numberWithInt:theImage.size.width];
 	imageMedia.height = [NSNumber numberWithInt:theImage.size.height];
     
-    imageMedia.customWidth = [NSNumber numberWithInt:[imageMedia.width intValue]];
-    imageMedia.customHeight = [NSNumber numberWithInt:[imageMedia.customWidth intValue] * [imageMedia.height intValue]/[imageMedia.width intValue]];
     if (isPickingFeaturedImage)
         [[NSNotificationCenter defaultCenter] postNotificationName:@"UploadingFeaturedImage" object:nil];
 
@@ -1352,7 +1346,8 @@
             return;
         }
         if (!isPickingFeaturedImage) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaBelow" object:imageMedia];
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:imageMedia, @"media", [[MediaSettings alloc] init], @"mediaSettings", nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaBelow" object:self userInfo:userInfo];
         }
         else {
             
@@ -1447,7 +1442,8 @@
                 NSLog(@"Media deleted while uploading (%@)", videoMedia);
                 return;
             }
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaBelow" object:videoMedia];
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:videoMedia, @"media", [[MediaSettings alloc] init], @"mediaSettings", nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaBelow" object:self userInfo:userInfo];
             [videoMedia save];
         } failure:nil];
 		isAddingMedia = NO;
@@ -1489,7 +1485,8 @@
         NSLog(@"Media deleted while uploading (%@)", media);
         return;
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaBelow" object:media];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:media, @"media", [[MediaSettings alloc] init], @"mediaSettings", nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaBelow" object:self userInfo:userInfo];
     [media save];
 	self.isAddingMedia = NO;
 }

@@ -36,11 +36,6 @@
 @dynamic blog;
 @dynamic posts;
 @dynamic remoteStatusNumber;
-@dynamic caption;
-@dynamic alignment;
-@dynamic linkType;
-@dynamic customWidth;
-@dynamic customHeight;
 
 + (Media *)newMediaForPost:(AbstractPost *)post {
     Media *media = [[Media alloc] initWithEntity:[NSEntityDescription entityForName:@"Media"
@@ -210,6 +205,13 @@
 }
 
 - (NSString *)html {
+    return [self htmlWithMediaSettings:nil];
+}
+
+- (NSString *)htmlWithMediaSettings:(MediaSettings *)mediaSettings {
+    if (mediaSettings == nil) {
+        mediaSettings = [[MediaSettings alloc] init];
+    }
 	NSString *result = @"";
 	
 	if(self.mediaType != nil) {
@@ -217,46 +219,30 @@
 			if(self.shortcode != nil)
 				result = self.shortcode;
 			else if(self.remoteURL != nil) {
-                // link type
-                NSString *mediaLinkType = nil;
-                if (self.linkType != nil) {
-                    mediaLinkType = self.linkType;
-                } else {
-                    // check the default link type
-                    if( [[self.blog getOptionValue:@"image_default_link_type"] isKindOfClass:[NSString class]] )
-                        mediaLinkType = (NSString *)[self.blog getOptionValue:@"image_default_link_type"];
-                    else
-                        mediaLinkType = @"";
-                }
-                NSString *linkPrefix = nil;
-                NSString *linkPostfix = nil;
-                if ([mediaLinkType isEqualToString:@"none"]) {
-                    linkPrefix = @"";
-                    linkPostfix = @"";
-                } else {
-                    linkPrefix = [NSString stringWithFormat:
-                                  @"<a href=\"%@\">",
-                                  self.remoteURL];
-                    linkPostfix = @"</a>";
+                // try to generate the HTML from the media settings first
+                result = [mediaSettings html];
+                
+                // if the HTML generated was empty then create the default HTML for the image
+                if (result == nil || [result isEqualToString:@""]) {
+                    // set the link blocks
+                    NSString *linkPrefix = nil;
+                    NSString *linkPostfix = nil;
+                    if([[self.blog getOptionValue:@"image_default_link_type"] isKindOfClass:[NSString class]]) {
+                        NSString *mediaLinkType = (NSString *)[self.blog getOptionValue:@"image_default_link_type"];
+                        if ([mediaLinkType isEqualToString:@"file"]) {
+                            linkPrefix = [NSString stringWithFormat:
+                                          @"<a href=\"%@\">",
+                                          self.remoteURL];
+                            linkPostfix = @"</a>";
+                        }
+                    } else {
+                        linkPrefix = @"";
+                        linkPostfix = @"";
+                    }
 
-                }
-                
-                // setup some defaults if values aren't set yet
-                if (self.alignment == nil) {
-                    self.alignment = @"alignnone";
-                }
-                if (self.customWidth == nil) {
-                    self.customWidth = [NSNumber numberWithInt:[self.width intValue]];
-                }
-                
-                if (self.caption != nil) {
                     result = [NSString stringWithFormat:
-                              @"[caption align=\"%@\" width=\"%d\"]%@<img src=\"%@\" width=\"%d\" />%@%@[/caption]",
-                              self.alignment, [self.customWidth intValue], linkPrefix, self.remoteURL, [self.customWidth intValue], linkPostfix, self.caption];
-                } else {
-                    result = [NSString stringWithFormat:
-                              @"%@<img src=\"%@\" width=\"%d\" class=\"%@\"/>%@",
-                              linkPrefix, self.remoteURL, [self.customWidth intValue], self.alignment, linkPostfix];
+                              @"%@<img src=\"%@\" class=\"alignnone\"/>%@",
+                              linkPrefix, self.remoteURL, linkPostfix];
                 }
             }
 		}

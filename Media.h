@@ -9,6 +9,7 @@
 #import <CoreData/CoreData.h>
 #import "Blog.h"
 #import "AbstractPost.h"
+#import "MediaSettings.h"
 
 typedef NS_ENUM(NSUInteger, MediaRemoteStatus) {
     MediaRemoteStatusPushing,    // Uploading post
@@ -30,11 +31,6 @@ typedef NS_ENUM(NSUInteger, MediaRemoteStatus) {
 @property (nonatomic, strong) NSString * shortcode;
 @property (nonatomic, strong) NSNumber * length;
 @property (nonatomic, strong) NSString * title;
-@property (nonatomic, strong) NSString * caption;
-@property (nonatomic, strong) NSString * alignment;
-@property (nonatomic, strong) NSString * linkType;
-@property (nonatomic, strong) NSNumber * customWidth;
-@property (nonatomic, strong) NSNumber * customHeight;
 @property (nonatomic, strong) NSData * thumbnail;
 @property (nonatomic, strong) NSString * filename;
 @property (nonatomic, strong) NSNumber * filesize;
@@ -56,6 +52,7 @@ typedef NS_ENUM(NSUInteger, MediaRemoteStatus) {
 - (void)remove;
 - (void)save;
 - (void)setImage:(UIImage *)image withSize:(MediaResize)size;
+- (NSString *)htmlWithMediaSettings:(MediaSettings *)mediaSettings;
 
 @end
 

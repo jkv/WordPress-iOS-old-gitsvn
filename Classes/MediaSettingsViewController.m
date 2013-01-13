@@ -12,11 +12,11 @@
 #define TAG_PICKER_LINK_TO      0
 #define TAG_PICKER_ALIGNMENT    1
 #define TAG_PICKER_POSITIONING  2
-#define MINIMUM_WIDTH_OPTION    10
 
 @implementation MediaSettingsViewController
 
 @synthesize media;
+@synthesize mediaSettings;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -27,7 +27,8 @@
     // fill the lists with the available options
     linkToOptionsList = [NSArray arrayWithObjects:
                          NSLocalizedString(@"No Linking", @"Media Settings option to have media have no link"),
-                         NSLocalizedString(@"Media File", @"Media Settings option to have media link to the file"), nil];
+                         NSLocalizedString(@"Media File", @"Media Settings option to have media link to the file"),
+                         NSLocalizedString(@"Current", @"Media Settings option to leave the media alone"), nil];
     positioningOptionsList = [NSArray arrayWithObjects:
                               NSLocalizedString(@"Current", @"Media Settings option to leave the media alone"),
                               NSLocalizedString(@"Above Content", @"Media Settings option to move media above the content"),
@@ -38,26 +39,28 @@
                             NSLocalizedString(@"Center", @"Media Settings option to align the media to center"),
                             NSLocalizedString(@"Right", @"Media Settings option to align the media to right"), nil];
         
-    if (media.caption != nil) {
-        captionTextField.text = media.caption;
+    if (mediaSettings.captionText != nil) {
+        captionTextField.text = mediaSettings.captionText;
     } else {
         captionTextField.text = @"";
     }
-    if (media.linkType != nil) {
-        if ([media.linkType isEqualToString:@"file"]) {
+    if (mediaSettings.linkHref!= nil) {
+        if ([mediaSettings.linkHref caseInsensitiveCompare:media.remoteURL] == NSOrderedSame) {
             linkToLabel.text = [linkToOptionsList objectAtIndex:1];
+        } else if ([mediaSettings.linkHref length] > 0) {
+            linkToLabel.text = [linkToOptionsList objectAtIndex:2];
         } else {
             linkToLabel.text = [linkToOptionsList objectAtIndex:0];
         }
     } else {
         linkToLabel.text = [linkToOptionsList objectAtIndex:0];
     }
-    if (media.alignment != nil) {
-        if ([media.alignment isEqualToString:@"alignleft"]) {
+    if (mediaSettings.alignment != nil) {
+        if ([mediaSettings.alignment isEqualToString:@"alignleft"]) {
             alignmentLabel.text = [alignmentOptionsList objectAtIndex:1];
-        } else if ([media.alignment isEqualToString:@"aligncenter"]) {
+        } else if ([mediaSettings.alignment isEqualToString:@"aligncenter"]) {
             alignmentLabel.text = [alignmentOptionsList objectAtIndex:2];
-        } else if ([media.alignment isEqualToString:@"alignright"]) {
+        } else if ([mediaSettings.alignment isEqualToString:@"alignright"]) {
             alignmentLabel.text = [alignmentOptionsList objectAtIndex:3];
         } else {
             alignmentLabel.text = [alignmentOptionsList objectAtIndex:0];
@@ -67,11 +70,16 @@
     }
     positioningLabel.text = [positioningOptionsList objectAtIndex:0];
     
-    widthSlider.minimumValue = MINIMUM_WIDTH_OPTION;
+    widthSlider.minimumValue = 0;
     widthSlider.maximumValue = [media.width intValue];
-    if (media.customWidth != nil && [media.customWidth intValue] > 0 && media.customHeight != nil && [media.customHeight intValue] > 0) {
-        imageSizeLabel.text = [NSString stringWithFormat:@"%d x %d", [media.customWidth intValue], [media.customHeight intValue]];
-        widthSlider.value = [media.customWidth intValue];
+    if (mediaSettings.customWidth != nil) {
+        int customWidth = [mediaSettings.customWidth intValue];
+        if (customWidth > widthSlider.maximumValue) {
+            widthSlider.maximumValue = customWidth;
+        }
+        int customHeight = customWidth * [media.height intValue]/[media.width intValue];
+        imageSizeLabel.text = [NSString stringWithFormat:@"%d x %d", customWidth, customHeight];
+        widthSlider.value = customWidth;
     } else {
         imageSizeLabel.text = [NSString stringWithFormat:@"%d x %d", [media.width intValue], [media.height intValue]];
         widthSlider.value = [media.width intValue];
@@ -337,40 +345,33 @@
     return @"";
 }
 
-- (void)pickerView:(UIPickerView *)aPickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {    
+- (void)pickerView:(UIPickerView *)aPickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:media, @"media", mediaSettings, @"mediaSettings", nil];
     if (aPickerView.tag == TAG_PICKER_POSITIONING) {
         positioningLabel.text = [positioningOptionsList objectAtIndex:row];
         if (row == 1) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaAbove" object:media];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaAbove" object:self userInfo:userInfo];
         } else if (row == 2) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaBelow" object:media];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ShouldInsertMediaBelow" object:self userInfo:userInfo];
         }
     } else {
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:media, @"media", media.html, @"previousHtml", nil];
         if (aPickerView.tag == TAG_PICKER_LINK_TO) {
             linkToLabel.text = [linkToOptionsList objectAtIndex:row];
             if (row == 0) {
-                media.linkType = @"none";
-                [media save];
-                
-            } else {
-                media.linkType = @"file";
-                [media save];
-            }
+                mediaSettings.linkHref = @"";
+            } else if (row == 1){
+                mediaSettings.linkHref = media.remoteURL;
+            } // else leave the linkHref alone
         } else if (aPickerView.tag == TAG_PICKER_ALIGNMENT) {
             alignmentLabel.text = [alignmentOptionsList objectAtIndex:row];
             if (row == 0) {
-                media.alignment = @"none";
-                [media save];
+                mediaSettings.alignment = @"alignnone";
             } else if (row == 1) {
-                media.alignment = @"alignleft";
-                [media save];
+                mediaSettings.alignment = @"alignleft";
             } else if (row == 2) {
-                media.alignment = @"aligncenter";
-                [media save];
+                mediaSettings.alignment = @"aligncenter";
             } else if (row == 3) {
-                media.alignment = @"alignright";
-                [media save];
+                mediaSettings.alignment = @"alignright";
             }
         }
         [[NSNotificationCenter defaultCenter]
@@ -559,13 +560,15 @@
     // step by 10s
     float newStep = roundf((slider.value) / 10.0f);
     slider.value = newStep * 10.0f;
+    if (slider.value + 10 > slider.maximumValue) {
+        slider.value = slider.maximumValue;
+    }
     int width = (int)slider.value;
     int height = width * [media.height intValue]/[media.width intValue];
     imageSizeLabel.text = [NSString stringWithFormat:@"%d x %d", width, height];
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:media, @"media", media.html, @"previousHtml", nil];
-    media.customWidth = [NSNumber numberWithInt:width];
-    media.customHeight = [NSNumber numberWithInt:height];
-    [media save];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:media, @"media", mediaSettings, @"mediaSettings", nil];
+    mediaSettings.customWidth = [NSNumber numberWithInt:width];
+    mediaSettings.customHeight = [NSNumber numberWithInt:height];
     [[NSNotificationCenter defaultCenter]
         postNotificationName:@"UpdateMedia"
         object:self
@@ -589,9 +592,8 @@
 }
 
 - (IBAction)textFieldFinishedEditing:(id)sender {
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:media, @"media", media.html, @"previousHtml", nil];
-    media.caption = captionTextField.text;
-    [media save];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:media, @"media", mediaSettings, @"mediaSettings", nil];
+    mediaSettings.captionText = captionTextField.text;
     [[NSNotificationCenter defaultCenter]
      postNotificationName:@"UpdateMedia"
      object:self
